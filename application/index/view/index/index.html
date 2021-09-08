@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <style type="text/css">
+            body, html,#world {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+        </style>
+        <title>{$site.name|htmlentities}</title>
+        <style>
+            .red{
+                background-color:red;
+            }
+            .yellow{
+                background-color: yellow;
+            }
+
+        </style>
+        <link rel="shortcut icon" href="__CDN__/assets/img/favicon.ico" />
+        <!-- Bootstrap Core CSS -->
+
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://cdn.staticfile.org/html5shiv/3.7.3/html5shiv.min.js"></script>
+            <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+
+        <![endif]-->
+    </head>
+    <body >
+        <form name="form">
+            <div class="" id="dl">
+                请输入手机号：<input type="text" id="phone"><br>
+            </div>
+            <input type="button" value="点击发送验证码" id="verification_code" onclick="foo(this,10000)"><br>
+            <input type="button" value="点击变红" onclick="red()">
+            <input type="button" value="点击变黄" onclick="yellow()"><br>
+            <span id="ewm">
+            </span>
+            <input type="button" value="点击获取数据库中数据" onclick="excel()"><br>
+            <input type="button" value="点击查看地图" onclick="world()">
+            <div id="qrcode"  ></div>
+            <div id="excel"></div>
+        </form>
+    </body>
+        <script src="__CDN__/assets/libs/jquery/dist/jquery.min.js"></script>
+        <script src="__CDN__/assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="__CDN__/assets/libs/qrcodejs-master/qrcode.js"></script>
+    <script src="__CDN__/assets/libs/qrcodejs-master/jquery.min.js"></script>
+
+    <script>
+            // 按钮倒计时
+            function foo(obj,time){
+                //获取form表单中的值
+                var phone=form.phone.value;
+                alert('手机号:'+phone)
+                var phone_id  = getQueryVariable("id");
+                //将手机号和密码发到后台，后台创建验证码。
+                $.ajax({
+                    type:'get',
+                    url:'http://mskt_test.zgxiaochengxu.com/api/index/only',
+                    data:{
+                        phone_id:phone_id,
+                        phone:phone,
+                    },
+                    success:function (data){
+                        console.log(data)
+                        var id = data.data.id;
+                        var li  = '<input abc="'+ id+'" type="button" value="点击生成邀请二维码" onclick="erweima()" id="erweima1"><br>'
+                        $("#ewm").html(li)
+                    }
+                })
+                obj.disabled = true;    //将按钮设置为不可用
+                obj.value=10;
+                setTimeout(function (){
+                    var x=setInterval(function (){
+                            time=time-1000;
+                            obj.value=(time/1000)%60;
+                            if(time==0){
+                                clearInterval(x);
+                                obj.value='再次发送验证码';
+                                obj.disabled=false;
+                            }
+                        },1000);
+                    },time-10000);
+            }
+            function red(){
+                document.getElementById('dl').className='red'
+            }
+            function yellow(){
+                document.getElementById('dl').className='yellow'
+            }
+            function erweima(){
+                var id = document.getElementById('erweima1').getAttribute('abc')
+                var url='http://mskt_test.zgxiaochengxu.com/?id='+id;
+                new QRCode(document.getElementById("qrcode"), url);  // 设置要生成二维码的链接
+            }
+            //获取url后的参数
+            function getQueryVariable(variable)
+            {
+                var query = window.location.search.substring(1);
+                var vars = query.split("&");
+                for (var i=0;i<vars.length;i++) {
+                    var pair = vars[i].split("=");
+                    if(pair[0] == variable){return pair[1];}
+                }
+                return 0;
+            }
+            function excel(){
+                $.ajax({
+                    type:'get',
+                    url:'http://mskt_test.zgxiaochengxu.com/api/index/excel',
+                    data:{
+                    },
+                    success:function (data){
+                        console.log(data)
+                        var li=data.data
+                        $("#excel").html(li)
+                    }
+                })
+            }
+            function world(){
+                window.location.href="{:url('index/world')}"
+            }
+
+    </script>
+</html>
