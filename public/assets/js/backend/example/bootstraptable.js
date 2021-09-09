@@ -248,6 +248,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'template'], function
         add: function () {
             Controller.api.bindevent();
         },
+
         edit: function () {
             Controller.api.bindevent();
         },

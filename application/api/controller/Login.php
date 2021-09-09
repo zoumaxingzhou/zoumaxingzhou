@@ -24,7 +24,6 @@ class Login extends Api{
         //获取openid
         $openid = $this->getOpenid($params['code']);
         if ($openid == 2){$this->error('获取openid失败');}
-
         //获取用户信息openid对应的user信息，
         $user_find = Db::name('user')->where('openid',$openid)->find();
         if ($user_find){        //如果查询到了用户，则查询用户是否被禁用，如果被禁用，则返回被禁用的信息，如果正常，则返回用户ID
@@ -58,6 +57,8 @@ class Login extends Api{
         }
 
     }
+
+
     /**
      *     微信获取openid
      * @param $code
